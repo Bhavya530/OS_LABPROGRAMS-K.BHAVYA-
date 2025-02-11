@@ -1,0 +1,50 @@
+#include <stdio.h>
+void sjf(int p[], int a[], int b[], int n) 
+{
+    int w[n], t[n], tw = 0, tt = 0, time = 0, completed = 0;
+    int isCompleted[n]; 
+    for (int i = 0; i < n; i++) {
+        isCompleted[i] = 0;
+    }
+    while (completed < n) {
+        int min = -1;
+        int minBurstTime = 9999;
+        for (int i = 0; i < n; i++) {
+            if (!isCompleted[i] && a[i] <= time && b[i] < minBurstTime) {
+                min = i;
+                minBurstTime = b[i];
+            }
+        }
+        if (min != -1) {
+            time = (time < a[min]) ? a[min] : time; 
+            time += b[min]; 
+            t[min] = time - a[min]; 
+            w[min] = t[min] - b[min]; 
+            tw += w[min];
+            tt += t[min];
+            isCompleted[min] = 1;
+            completed++; 
+        }
+        else {
+            time++;
+        }
+    }
+    printf("\nP  A  B  W  T\n");
+    for (int i = 0; i < n; i++) {
+        printf("%d  %d  %d  %d  %d\n", p[i], a[i], b[i], w[i], t[i]);
+    }
+    printf("\nAvg W: %.2f\nAvg T: %.2f\n", (float)tw / n, (float)tt / n);
+}
+int main() {
+    int n;
+    printf("Enter number of processes: ");
+    scanf("%d", &n);
+    int p[n], a[n], b[n];
+    printf("Enter Arrival Time and Burst Time for each process:\n");
+    for (int i = 0; i < n; i++) {
+        p[i] = i + 1;
+        scanf("%d %d", &a[i], &b[i]);
+    }
+    sjf(p, a, b, n);
+    return 0;
+}
