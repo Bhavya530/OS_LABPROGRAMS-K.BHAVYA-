@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+void copyFile(char *sourceFile, char *destinationFile) {
+    FILE *source, *destination;
+    char buffer[1024];
+    size_t bytesRead;
+    source = fopen(sourceFile, "r");
+    if (source == NULL) {
+        printf("Error: Cannot open source file %s\n", sourceFile);
+        exit(1);
+    }
+    destination = fopen(destinationFile, "r");
+    if (destination != NULL) {
+        char choice;
+        printf("Warning: %s already exists. Do you want to overwrite it? (y/n): ", destinationFile);
+        scanf(" %c", &choice);
+        fclose(destination); 
+        if (choice != 'y' && choice != 'Y') {
+            printf("File copy operation canceled.\n");
+            fclose(source);
+            exit(1);
+        }
+    }
+    destination = fopen(destinationFile, "w");
+    if (destination == NULL) {
+        printf("Error: Cannot open destination file %s\n", destinationFile);
+        fclose(source);
+        exit(1);
+    }
+    while ((bytesRead = fread(buffer, 1, sizeof(buffer), source)) > 0) {
+        fwrite(buffer, 1, bytesRead, destination);
+    }
+    printf("File copied successfully.\n");
+    fclose(source);
+    fclose(destination);
+}
+int main() {
+    char sourceFile[100], destinationFile[100];
+    printf("Enter the source file name: ");
+    fgets(sourceFile, sizeof(sourceFile), stdin);
+    sourceFile[strcspn(sourceFile, "\n")] = '\0'; 
+    printf("Enter the destination file name: ");
+    fgets(destinationFile, sizeof(destinationFile), stdin);
+    destinationFile[strcspn(destinationFile, "\n")] = '\0';  
+    copyFile(sourceFile, destinationFile);
+    return 0;
+}
